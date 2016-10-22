@@ -1,7 +1,8 @@
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
-
 var socialConfig = require('./socialConfig');
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var TwitterStrategy  = require('passport-twitter').Strategy;
 
 module.exports = function( passport ) {
 
@@ -68,6 +69,98 @@ module.exports = function( passport ) {
             });
         });
 
+    }));
+
+///--------------------------------google---------------------------------------------
+
+	passport.use('google-passport', new GoogleStrategy({
+
+        clientID        : socialConfig.googleAuth.appId,
+        clientSecret    : socialConfig.googleAuth.secretId,
+        callbackURL     : socialConfig.googleAuth.callback_URL,
+
+    },
+    function(token, refreshToken, profile, done) {
+    	console.log(profile);
+        // make the code asynchronous
+        // User.findOne won't fire until we have all our data back from Google
+       /* process.nextTick(function() {
+
+            // try to find the user based on their google id
+            User.findOne({ 'google.id' : profile.id }, function(err, user) {
+                if (err)
+                    return done(err);
+
+                if (user) {
+
+                    // if a user is found, log them in
+                    return done(null, user);
+                } else {
+                    // if the user isnt in our database, create a new user
+                    var newUser          = new User();
+
+                    // set all of the relevant information
+                    newUser.google.id    = profile.id;
+                    newUser.google.token = token;
+                    newUser.google.name  = profile.displayName;
+                    newUser.google.email = profile.emails[0].value; // pull the first email
+
+                    // save the user
+                    newUser.save(function(err) {
+                        if (err)
+                            throw err;
+                        return done(null, newUser);
+                    });
+                }
+            });
+        });*/
+
+    }));
+///-----------------------Twitter--------------------------------------
+	passport.use('twitter-password',new TwitterStrategy({
+
+        consumerKey     : socialConfig.twitterAuth.appId,
+        consumerSecret  : socialConfig.twitterAuth.secretId,
+        callbackURL     : socialConfig.twitterAuth.callback_URL,
+
+    },
+    function(token, tokenSecret, profile, done) {
+    	console.log(profile);
+        // make the code asynchronous
+    // User.findOne won't fire until we have all our data back from Twitter
+       /* process.nextTick(function() {
+
+            User.findOne({ 'twitter.id' : profile.id }, function(err, user) {
+
+                // if there is an error, stop everything and return that
+                // ie an error connecting to the database
+                if (err)
+                    return done(err);
+
+                // if the user is found then log them in
+                if (user) {
+                    return done(null, user); // user found, return that user
+                } else {
+                    // if there is no user, create them
+                    var newUser                 = new User();
+
+                    // set all of the user data that we need
+                    newUser.twitter.id          = profile.id;
+                    newUser.twitter.token       = token;
+                    newUser.twitter.username    = profile.username;
+                    newUser.twitter.displayName = profile.displayName;
+
+                    // save our user into the database
+                    newUser.save(function(err) {
+                        if (err)
+                            throw err;
+                        return done(null, newUser);
+                    });
+                }
+            });
+
+    });
+*/
     }));
 
 };
